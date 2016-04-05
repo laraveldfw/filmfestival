@@ -9,6 +9,7 @@
 
     <title>@yield('title', 'Film Festival')</title>
 
+    <link rel="stylesheet" href="{{ elixir('css/app.css') }}" />
     @yield('css')
 
     <script src="/js/angular.min.js" type="text/javascript"></script>
