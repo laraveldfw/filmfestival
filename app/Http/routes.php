@@ -18,5 +18,6 @@ Route::get('/', function () {
 Route::group(['middleware' => 'web'], function () {
     
     Route::get('/register', 'RegisterFilmController@show');
-    
+    Route::post('/isEmailUnique', 'FilmAuthController@isEmailUnique');
+    Route::post('/login', 'FilmAuthController@login');
 });

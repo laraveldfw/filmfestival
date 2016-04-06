@@ -12,6 +12,6 @@ class RegisterFilmController extends Controller
 
     public function show()
     {
-        return view('register.final');
+        return view('final.register.register');
     }
 }

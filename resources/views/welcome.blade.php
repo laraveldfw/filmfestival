@@ -9,7 +9,7 @@
                 28th Annual <br>
                 End Of The World Film Festival <br>
                 <small>
-                    This is the last one! We are sure this time :(
+                    This really could be the last one :(
                 </small>
             </h1>
         </div>

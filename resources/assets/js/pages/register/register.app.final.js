@@ -6,6 +6,7 @@
 * @returns none
 */
 
-var registerApp = angular.Module('RegisterApp', [])
-    
+var registerApp = angular.module('RegisterApp', [])
+    .value('pwdTester', zxcvbn)
+    .service('AuthService', AuthService)
     .controller('RegisterController', RegisterController);
