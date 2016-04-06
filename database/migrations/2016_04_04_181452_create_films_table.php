@@ -18,6 +18,7 @@ class CreateFilmsTable extends Migration
             $table->string('name', 30);
             $table->tinyInteger('run_length'); // in minutes
             $table->string('image_url')->nullable();
+            $table->mediumText('source_url');
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')
                 ->references('id')->on('users')

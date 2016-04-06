@@ -3,6 +3,13 @@
 @section('content')
     <section ng-app="RegisterApp">
         <section ng-controller="RegisterController">
+            <a href="/logout"
+               class="btn btn-warning"
+               ng-show="user"
+               title="Sign Out"
+               style="position: absolute; top: 5px; right: 5px;">
+                <i class="fa fa-sign-out"></i>
+            </a>
             <div class="container">
                 <div class="row">
                     <div class="col-xs-12" style="margin-top: 20px;">
@@ -30,5 +37,18 @@
     @endsection
 
 @section('footerScripts')
+    <script>
+        var categories = {!! $categories !!};
+
+        var filmConfig = {
+            registrationCost: {{ config('film.registrationCost') }},
+            freeCategories: {{ config('film.freeCategories') }},
+            maxCategories: {{ config('film.maxCategories') }},
+            extraCategoryCost: {{ config('film.extraCategoryCost') }},
+            maxFilms: {{ config('film.maxFilms') }}
+        };
+
+        var ticketCost = {{ config('ticket.cost') }};
+    </script>
     <script src="{{ elixir('js/register.js') }}" type="text/javascript"></script>
     @endsection

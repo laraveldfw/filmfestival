@@ -12244,9 +12244,9 @@ var time_estimates;time_estimates={estimate_attack_times:function(e){var t,n,s,o
 * @returns none
 */
 
-AuthService.$inject = ['$log', '$http'];
+AuthService.$inject = ['$log', '$http', '$q'];
 
-function AuthService($log, $http) {
+function AuthService($log, $http, $q) {
     
     var self = this;
     
@@ -12260,9 +12260,11 @@ function AuthService($log, $http) {
     
     
     /****  Public Functions  ****/
-    self.checkAuth = checkAuth;
-    self.getUser = getUser;
-    self.isEmailUnique = isEmailUnique;
+    self.checkAuth         = checkAuth;
+    self.getUser           = getUser;
+    self.isEmailUnique     = isEmailUnique;
+    self.registerAccount   = registerAccount;
+    self.checkConfirmation = checkConfirmation;
     
     /****  Private Functions  ****/
     
@@ -12274,7 +12276,7 @@ function AuthService($log, $http) {
     * @returns $http promise
     */
     function checkAuth() {
-        
+
         return $http.get('/checkAuth')
             .then(function (response) {
                 if(response.data.success){
@@ -12295,7 +12297,8 @@ function AuthService($log, $http) {
     */
     function getUser() {
         return user;
-    }   
+    }
+
     
     /*
     * Checks to see if a given email is unique
@@ -12311,6 +12314,53 @@ function AuthService($log, $http) {
         });
         
     }
+
+    /*
+    * Attemps to log in with credentials
+    *
+    * @params email (string|required), password (string|required)
+    *
+    * @returns promise
+    */
+    function registerAccount(name, email, password) {
+
+        if(angular.isObject(user)){
+            return $q(function (resolve, reject) {
+                reject('User is already logged in');
+            });
+        }
+        else {
+            return $http.post('/register', {
+                name: name,
+                email: email,
+                password: password
+            })
+        }
+    }
+    
+    /*
+    * Checks users confirmation code
+    *
+    * @params code
+    *
+    * @returns $http promise -> {success: bool, user: object(if success)}
+    */
+    function checkConfirmation(confirmation) {
+        
+        return $http.post('/checkConfirmation', {
+            confirmation: confirmation
+        })
+            .then(function (response) {
+                if(response.data.success){
+                    user = response.data.user;
+                }
+                return response;
+            }, function (error) {
+                console.log(error);
+                return error;
+            });
+        
+    }    
     
 }
 /*
@@ -12382,8 +12432,29 @@ function RegisterController($scope, pwdTester, AuthService) {
     };
     
     $scope.registerAccount = function () {
-        
-    }
+        $scope.registering = true;
+        AuthService.registerAccount($scope.register.name, $scope.register.email, $scope.register.pwd)
+            .then(function () {
+                $scope.registrationEmailSent = true;
+                $scope.registering = false;
+            }, function (error) {
+                console.log(error);
+                $scope.registering = false;
+            });
+    };
+    
+    $scope.checkConfirmation = function () {
+        if($scope.confirmation && $scope.confirmation.length === 32){
+            $scope.checkingConfirmation = true;
+            AuthService.checkConfirmation($scope.confirmation)
+                .then(function (response) {
+                    $scope.user = response.data.user;
+                    $scope.checkingConfirmation = false;
+                }, function (error) {
+                    $scope.checkingConfirmation = false;
+                });
+        }
+    };
     
 }
 /*

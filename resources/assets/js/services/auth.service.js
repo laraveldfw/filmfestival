@@ -22,10 +22,11 @@ function AuthService($log, $http, $q) {
     
     
     /****  Public Functions  ****/
-    self.checkAuth       = checkAuth;
-    self.getUser         = getUser;
-    self.isEmailUnique   = isEmailUnique;
-    self.registerAccount = registerAccount;
+    self.checkAuth         = checkAuth;
+    self.getUser           = getUser;
+    self.isEmailUnique     = isEmailUnique;
+    self.registerAccount   = registerAccount;
+    self.checkConfirmation = checkConfirmation;
     
     /****  Private Functions  ****/
     
@@ -98,5 +99,29 @@ function AuthService($log, $http, $q) {
             })
         }
     }
+    
+    /*
+    * Checks users confirmation code
+    *
+    * @params code
+    *
+    * @returns $http promise -> {success: bool, user: object(if success)}
+    */
+    function checkConfirmation(confirmation) {
+        
+        return $http.post('/checkConfirmation', {
+            confirmation: confirmation
+        })
+            .then(function (response) {
+                if(response.data.success){
+                    user = response.data.user;
+                }
+                return response;
+            }, function (error) {
+                console.log(error);
+                return error;
+            });
+        
+    }    
     
 }
