@@ -6,9 +6,17 @@
 * @returns none
 */
 
-RegisterController.$inject = ['$scope', 'pwdTester', 'AuthService', 'filmConfig', 'ticketCost'];
+RegisterController.$inject = ['$scope', '$http', 'pwdTester', 'AuthService', 'filmConfig', 'ticketCost', 'categories'];
 
-function RegisterController($scope, pwdTester, AuthService, filmConfig, ticketCost) {
+function RegisterController($scope, $http, pwdTester, AuthService, filmConfig, ticketCost, categories) {
+    
+    $scope.filmConfig = filmConfig;
+    $scope.categories = categories;
+    
+    AuthService.checkAuth()
+        .then(function (user) {
+            $scope.user = user;
+        });
     
     $scope.navItems = [
         {
@@ -69,15 +77,17 @@ function RegisterController($scope, pwdTester, AuthService, filmConfig, ticketCo
     };
     
     $scope.registerAccount = function () {
-        $scope.registering = true;
-        AuthService.registerAccount($scope.register.name, $scope.register.email, $scope.register.pwd)
-            .then(function () {
-                $scope.registrationEmailSent = true;
-                $scope.registering = false;
-            }, function (error) {
-                console.log(error);
-                $scope.registering = false;
-            });
+        if(!$scope.user){
+            $scope.registering = true;
+            AuthService.registerAccount($scope.register.name, $scope.register.email, $scope.register.pwd)
+                .then(function () {
+                    $scope.registrationEmailSent = true;
+                    $scope.registering = false;
+                }, function (error) {
+                    console.log(error);
+                    $scope.registering = false;
+                }); 
+        }
     };
     
     $scope.checkConfirmation = function () {
@@ -93,21 +103,29 @@ function RegisterController($scope, pwdTester, AuthService, filmConfig, ticketCo
         }
     };
     //</editor-fold>
-    
+
+    //<editor-fold desc="Film Registration">
     var filmTemplate = {
         name: null,
         source_url: null,
         categories: [],
         run_length: null,
         cost: function () {
-            return filmConfig.registrationCost + (this.categories.length * filmConfig.extraCategoryCost);
+            var cst = 0;
+            for (var i = 0; i < this.categories.length; i++) {
+                cst += this.categories[i].selected ? filmConfig.extraCategoryCost : 0;
+            }
+            return filmConfig.registrationCost + cst;
         }
     };
-    $scope.films = [filmTemplate];
+    for (var i = 0; i < categories.length; i++) {
+        filmTemplate.categories.push(angular.copy(categories[i]));
+    }
+    $scope.films = [angular.copy(filmTemplate)];
     
     $scope.addFilm = function () {
-        if($scope.films.length < filmConfig.maxFilms){
-            $scope.films.push(filmTemplate);
+        if($scope.films.length < filmConfig.maxFilmsPerPerson){
+            $scope.films.push(angular.copy(filmTemplate));
         }
     };
     
@@ -115,4 +133,61 @@ function RegisterController($scope, pwdTester, AuthService, filmConfig, ticketCo
         $scope.films.splice(index, 1);  
     };
     
+    $scope.totalCategoriesSelected = function (film) {
+        var catCount = 0;
+        for (var i = 0; i < film.categories.length; i++) {
+            if(film.categories[i].selected) catCount++;
+        }
+        return catCount;
+    };
+    
+    $scope.totalCategoryCount = function () {
+        if(angular.isArray($scope.films)){
+            var filmCatCount = 0;
+            for (var i = 0, count = 0; i < $scope.films.length; i++) {
+                filmCatCount += $scope.totalCategoriesSelected($scope.films[i]);
+            }
+            return filmCatCount;
+        }
+    };
+    
+    $scope.totalFilmsDue = function () {
+        var cost = 0;
+        for (var i = 0; i < $scope.films.length; i++) {
+            cost += $scope.films[i].cost();
+        }
+        return cost;
+    };
+
+    $scope.oneCatMinPerFilm = function () {
+        
+        for (var i = 0; i < $scope.films.length; i++) {
+            if($scope.totalCategoriesSelected($scope.films[i]) < 1){
+                return false;
+            }
+        }
+        return true;
+    };
+
+    $scope.submitFilms = function () {
+        //$http request to save films?
+        $scope.currentNav = 2;
+    };
+    //</editor-fold>
+
+    $scope.$watch('currentNav', function (nav) {
+         if(nav === 2 && !$scope.categoryTickets){
+             $scope.fetchingTickets = true;
+             $http.get('/getCategoryTickets')
+                 .then(function (response) {
+                     if(response.data.success){
+                         $scope.categoryTickets = response.data.categoryTickets;
+                         $scope.fetchingTickets = false;
+                     }
+                 }, function (error) {
+                     console.error(error);
+                     $scope.fetchingTickets = false;
+                 })
+         }
+    });
 }

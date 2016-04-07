@@ -15,7 +15,7 @@ class CreateFilmCategoriesTable extends Migration
         Schema::create('film_categories', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->string('name', 50);
+            $table->string('name', 100);
         });
     }
 

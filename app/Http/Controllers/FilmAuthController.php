@@ -59,4 +59,12 @@ class FilmAuthController extends Controller
             'user' => $user
         ]);
     }
+
+    public function checkAuth()
+    {
+        return response()->json([
+            'success' => Auth::check(),
+            'user' => Auth::check() ? Auth::user()->toArray() : null, 
+        ]);
+    }
 }

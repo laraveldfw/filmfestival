@@ -32,6 +32,8 @@ elixir(function(mix) {
             './node_modules/bootswatch/' + siteTheme + '/bootstrap.css',
             './node_modules/animate.css/animate.css',
             './node_modules/font-awesome/css/font-awesome.css',
+            './node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
+            'ticketPicker.css',
             'global.css'
         ], 'public/css/app.css')
             
@@ -39,10 +41,14 @@ elixir(function(mix) {
         .scripts([
             'app.js',
             './node_modules/zxcvbn/dist/zxcvbn.js',
+            'directives/ticketPicker/ticketPicker.directive.js',
             'services/auth.service.js',
             'pages/register/register.controller.final.js',
             'pages/register/register.app.final.js'
         ], 'public/js/register.js')
+            
+        // copy partials from directives
+        .copy('./resources/assets/js/directives/ticketPicker/ticketPicker.html', 'public/partials/ticketPicker.html')
             
         
         // version files

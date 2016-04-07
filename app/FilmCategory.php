@@ -10,7 +10,7 @@ class FilmCategory extends Model
 
     public function films()
     {
-        return $this->belongsToMany('App\Film', 'category_film', 'category_id', 'film_id');
+        return $this->belongsToMany('App\Film', 'category_film', 'category_id', 'film_id')->withTimestamps();
     }
 
     public function tickets()

@@ -1,0 +1,21 @@
+.seat {
+    -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.seat.open {
+    background-color: lightblue;
+}
+
+.seat.taken {
+    background-color: lightgrey;
+}
+
+.seat.picked {
+    background-color: lightgreen;
+}

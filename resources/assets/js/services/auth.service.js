@@ -13,7 +13,7 @@ function AuthService($log, $http, $q) {
     var self = this;
     
     /****  Private Variables  ****/
-    var user;
+    var user = null;
     
     /****  Public Variables  ****/
     
@@ -44,6 +44,7 @@ function AuthService($log, $http, $q) {
                 if(response.data.success){
                     user = response.data.user;
                 }
+                return user;
             }, function (error) {
                 $log.error('There was an error trying to get auth data', error);
             });

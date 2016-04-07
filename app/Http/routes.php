@@ -16,12 +16,21 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => 'web'], function () {
+    //Auth
     Route::get('/logout', function () {
         Auth::logout();
         return redirect('/');
     });
-    Route::get('/register', 'RegisterFilmController@show');
     Route::post('/isEmailUnique', 'FilmAuthController@isEmailUnique');
     Route::post('/register', 'FilmAuthController@register');
     Route::post('/checkConfirmation', 'FilmAuthController@checkConfirmation');
+    Route::get('/checkAuth', 'FilmAuthController@checkAuth');
+    
+    // Film Register
+    Route::get('/register', 'RegisterFilmController@show');
+    
+    Route::group(['middleware' => 'auth'], function () {
+        Route::get('/getCategoryTickets', 'RegisterFilmController@getCategoryTickets'); 
+    });
+    
 });

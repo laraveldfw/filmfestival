@@ -38,14 +38,15 @@
 
 @section('footerScripts')
     <script>
-        var categories = {!! $categories !!};
+        var categories = {!! json_encode($categories) !!};
 
         var filmConfig = {
             registrationCost: {{ config('film.registrationCost') }},
             freeCategories: {{ config('film.freeCategories') }},
-            maxCategories: {{ config('film.maxCategories') }},
+            maxCategoriesPerFilm: {{ config('film.maxCategoriesPerFilm') }},
             extraCategoryCost: {{ config('film.extraCategoryCost') }},
-            maxFilms: {{ config('film.maxFilms') }}
+            maxFilmsPerPerson: {{ config('film.maxFilmsPerPerson') }},
+            maxFilmsPerCategory: {{ config('film.maxFilmsPerCategory') }}
         };
 
         var ticketCost = {{ config('ticket.cost') }};

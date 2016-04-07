@@ -6,6 +6,7 @@
   "dependencies": {
     "angular": "^1.5.3",
     "animate.css": "^3.5.1",
+    "awesome-bootstrap-checkbox": "^1.0.0-alpha.3",
     "bootstrap": "^3.3.6",
     "bootstrap-sass": "^3.0.0",
     "bootswatch": "^3.3.6",
